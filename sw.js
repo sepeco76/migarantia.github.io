@@ -1,6 +1,6 @@
 // Service worker: permite abrir la app sin conexión y recibir archivos compartidos desde otras apps.
 // Cambia VERSION en cada publicación para que los móviles reciban la nueva versión.
-const VERSION = "v0.2.0";
+const VERSION = "v0.2.1";
 const CACHE = "migarantia-" + VERSION;
 const ARCHIVOS = ["./", "index.html", "app.js", "manifest.webmanifest", "icon-192.png", "icon-512.png", "icon-maskable-512.png"];
 
