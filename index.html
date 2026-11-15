@@ -11,241 +11,103 @@
 <link rel="apple-touch-icon" href="icon-192.png">
 <style>
   :root {
-    --bg: #f7f6f2; --card: #ffffff; --text: #1f1e1b; --muted: #6b6a64; --line: #e4e2da;
-    --accent: #0f6e56; --accent-text: #ffffff; --ok: #1d9e75; --warn: #ba7517; --warn-bg: #faeeda; --bad: #a32d2d;
+    --bg: #f7f6f2; --card: #ffffff; --text: #1f1e1b; --muted: #6b6a64; --line: #e4e2da; --soft: #f1efe8;
+    --accent: #0f6e56; --accent-text: #ffffff; --link: #0f6e56;
+    --ok: #1d9e75; --warn: #9a5f10; --warn-bg: #faeeda; --bad: #a32d2d; --bad-bg: #fcebeb;
   }
   @media (prefers-color-scheme: dark) {
-    :root { --bg: #161614; --card: #22221f; --text: #f1efe8; --muted: #b4b2a9; --line: #3a3935;
-            --accent: #1d9e75; --ok: #5dcaa5; --warn: #ef9f27; --warn-bg: #412402; --bad: #f09595; }
+    :root { --bg: #161614; --card: #22221f; --text: #f1efe8; --muted: #b4b2a9; --line: #3a3935; --soft: #2c2c2a;
+            --accent: #1d9e75; --link: #5dcaa5; --ok: #5dcaa5; --warn: #ef9f27; --warn-bg: #412402; --bad: #f09595; --bad-bg: #501313; }
   }
-  * { box-sizing: border-box; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); font-size: 16px; }
-  header { position: sticky; top: 0; z-index: 2; background: var(--bg); padding: 14px 16px 8px; display: flex; align-items: center; gap: 10px; }
-  header h1 { font-size: 20px; font-weight: 600; margin: 0; flex: 1; }
-  header button.volver { border: none; background: none; font-size: 22px; color: var(--text); padding: 0 6px 0 0; }
-  main { padding: 0 16px 110px; max-width: 640px; margin: 0 auto; }
+  header { position: sticky; top: 0; z-index: 5; background: var(--bg); padding: 12px 16px 8px; display: flex; align-items: center; gap: 8px; }
+  header h1 { font-size: 20px; font-weight: 600; margin: 0; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .icono-btn { border: none; background: none; font-size: 22px; color: var(--text); padding: 4px 6px; line-height: 1; }
+  main { padding: 0 16px 150px; max-width: 640px; margin: 0 auto; }
+  nav { position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; display: flex; background: var(--card); border-top: 1px solid var(--line); padding-bottom: env(safe-area-inset-bottom); }
+  nav a { flex: 1; text-align: center; padding: 9px 0 10px; font-size: 12px; color: var(--muted); text-decoration: none; }
+  nav a span { display: block; font-size: 20px; }
+  nav a.activo { color: var(--link); font-weight: 600; }
+  .fab { position: fixed; left: 16px; right: 16px; bottom: calc(70px + env(safe-area-inset-bottom)); max-width: 608px; margin: 0 auto; z-index: 4;
+         background: var(--accent); color: var(--accent-text); border: none; border-radius: 14px; padding: 14px; font-size: 17px; font-weight: 600; }
+  .primario { width: 100%; background: var(--accent); color: var(--accent-text); border: none; border-radius: 14px; padding: 14px; font-size: 17px; font-weight: 600; margin-top: 18px; }
   .buscador { width: 100%; padding: 11px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--card); color: var(--text); font-size: 16px; margin-bottom: 8px; }
-  .lista { background: var(--card); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
-  .item { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-top: 1px solid var(--line); cursor: pointer; }
+  .chips { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 4px; }
+  .chip { flex: none; border: 1px solid var(--line); background: var(--card); color: var(--muted); border-radius: 18px; padding: 6px 12px; font-size: 14px; }
+  .chip.on { background: var(--accent); border-color: var(--accent); color: var(--accent-text); }
+  .lista { background: var(--card); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; margin-bottom: 10px; }
+  .item { display: flex; align-items: center; gap: 10px; padding: 11px 12px; border-top: 1px solid var(--line); }
   .item:first-child { border-top: none; }
-  .avatar { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; flex: none; }
-  .estado { display: flex; align-items: center; gap: 5px; flex: none; }
-  .punto { width: 12px; height: 12px; border-radius: 50%; box-sizing: border-box; }
+  .item.click { cursor: pointer; }
+  .avatar { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; flex: none; position: relative; }
+  .insignia { position: absolute; right: -4px; bottom: -4px; width: 20px; height: 20px; border-radius: 50%; background: var(--card); border: 1px solid var(--line); font-size: 11px; display: flex; align-items: center; justify-content: center; }
+  .estado { display: flex; align-items: center; gap: 4px; flex: none; }
+  .punto { width: 12px; height: 12px; border-radius: 50%; }
   .punto.completa { background: var(--ok); }
+  .punto.parcial { border: 2px solid var(--ok); background: linear-gradient(90deg, var(--ok) 50%, transparent 50%); }
   .punto.sin { border: 2px solid var(--muted); }
-  .paraguas { font-size: 15px; filter: grayscale(1); opacity: .45; }
+  .paraguas { font-size: 15px; filter: grayscale(1); opacity: .4; }
   .paraguas.on { filter: none; opacity: 1; }
   .texto { flex: 1; min-width: 0; }
   .titulo { font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .sub { font-size: 13px; color: var(--muted); }
-  .sub.urgente { color: var(--warn); }
-  .sub.vencido { color: var(--bad); }
-  .vacio { text-align: center; padding: 48px 20px; color: var(--muted); }
+  .sub { font-size: 13px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .urgente { color: var(--warn) !important; }
+  .vencido { color: var(--bad) !important; }
+  .fecha { font-size: 13px; color: var(--muted); flex: none; text-align: right; }
+  .mini { border: 1px solid var(--line); background: var(--card); color: var(--text); border-radius: 8px; padding: 5px 9px; font-size: 14px; flex: none; text-decoration: none; }
+  .grupo { font-size: 13px; font-weight: 600; margin: 14px 2px 6px; color: var(--muted); }
+  .grupo.atrasado { color: var(--bad); } .grupo.mes { color: var(--warn); }
+  .vacio { text-align: center; padding: 40px 20px; color: var(--muted); }
   .vacio .grande { font-size: 44px; }
-  .fab { position: fixed; left: 16px; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom)); max-width: 608px; margin: 0 auto;
-         background: var(--accent); color: var(--accent-text); border: none; border-radius: 14px; padding: 15px; font-size: 17px; font-weight: 600; }
-  label { display: block; font-size: 13px; color: var(--muted); margin: 12px 0 4px; }
-  input, select { width: 100%; padding: 11px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--card); color: var(--text); font-size: 16px; }
+  .seccion { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 4px 14px 14px; margin-bottom: 12px; }
+  .seccion h2 { font-size: 13px; color: var(--muted); font-weight: 600; margin: 12px 0 4px; text-transform: uppercase; letter-spacing: .03em; }
+  label { display: block; font-size: 13px; color: var(--muted); margin: 10px 0 4px; }
+  label.check { display: flex; align-items: center; gap: 10px; font-size: 16px; color: var(--text); margin: 12px 0 4px; }
+  label.check input { width: 22px; height: 22px; }
+  input, select, textarea { width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--card); color: var(--text); font-size: 16px; font-family: inherit; }
   .dos { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .oculto { display: none; }
+  .fila { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 9px 0; border-top: 1px solid var(--line); font-size: 15px; }
+  .seccion h2 + .fila, .seccion .fila:first-child { border-top: none; }
+  .fila > span:first-child { color: var(--muted); }
+  .fila .valor { text-align: right; word-break: break-word; }
   .aviso { background: var(--warn-bg); color: var(--warn); border-radius: 10px; padding: 10px 12px; font-size: 14px; margin: 8px 0; }
-  .tarjeta { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 14px; margin-bottom: 12px; }
-  .tarjeta h2 { font-size: 13px; color: var(--muted); font-weight: 600; margin: 0 0 8px; }
-  .fila { display: flex; justify-content: space-between; gap: 12px; padding: 7px 0; border-top: 1px solid var(--line); font-size: 15px; }
-  .fila:first-of-type { border-top: none; }
-  .fila span:first-child { color: var(--muted); }
-  .boton { width: 100%; padding: 13px; border-radius: 12px; border: 1px solid var(--line); background: var(--card); color: var(--text); font-size: 16px; margin-top: 8px; }
+  .info { background: var(--soft); border-radius: 10px; padding: 10px 12px; font-size: 14px; margin: 8px 0; }
+  .boton { display: block; width: 100%; text-align: center; padding: 12px; border-radius: 12px; border: 1px solid var(--line); background: var(--card); color: var(--text); font-size: 16px; margin-top: 8px; text-decoration: none; }
   .boton.peligro { color: var(--bad); }
-  .pie { text-align: center; font-size: 12px; color: var(--muted); margin-top: 18px; }
-  .pie button { background: none; border: none; color: var(--accent); font-size: 13px; text-decoration: underline; }
+  .dosbotones { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .docs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 8px; }
+  .doc { position: relative; aspect-ratio: 1; border-radius: 10px; overflow: hidden; background: var(--soft); border: 1px solid var(--line); display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 12px; color: var(--muted); text-align: center; cursor: pointer; }
+  .doc img { width: 100%; height: 100%; object-fit: cover; }
+  .doc .etq { position: absolute; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,.55); color: #fff; font-size: 11px; padding: 3px; }
+  .doc .pdf { font-size: 30px; }
+  .docedit { display: flex; gap: 8px; align-items: center; padding: 6px 0; border-top: 1px solid var(--line); }
+  .docedit img, .docedit .pdfmini { width: 44px; height: 44px; object-fit: cover; border-radius: 8px; flex: none; background: var(--soft); display: flex; align-items: center; justify-content: center; }
+  .repetible { border-top: 1px solid var(--line); padding-top: 4px; margin-top: 8px; }
+  .quitar { background: none; border: none; color: var(--bad); font-size: 14px; padding: 6px 0; }
+  .anadir { background: none; border: 1px dashed var(--line); color: var(--link); width: 100%; border-radius: 10px; padding: 10px; font-size: 15px; margin-top: 10px; }
+  .visor { position: fixed; inset: 0; z-index: 20; background: rgba(0,0,0,.92); display: flex; flex-direction: column; }
+  .visor img { flex: 1; min-height: 0; object-fit: contain; width: 100%; }
+  .visor button { background: none; border: none; color: #fff; font-size: 17px; padding: 16px; text-align: right; }
+  .copiar { border: none; background: none; color: var(--link); font-size: 14px; padding: 0 0 0 6px; }
+  .pie { text-align: center; font-size: 12px; color: var(--muted); margin-top: 16px; }
+  .toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(140px + env(safe-area-inset-bottom)); background: var(--text); color: var(--bg); padding: 10px 16px; border-radius: 10px; font-size: 14px; z-index: 30; }
 </style>
 </head>
 <body>
 <header>
-  <button class="volver" id="volver" hidden aria-label="Volver">←</button>
+  <button class="icono-btn" id="volver" hidden aria-label="Volver">←</button>
   <h1 id="tituloPantalla">Mi garantía</h1>
+  <button class="icono-btn" id="ajustes" aria-label="Ajustes">⚙️</button>
 </header>
 <main id="app"></main>
-<button class="fab" id="fab">＋ Nueva compra</button>
-
-<script>
-// ===== Datos básicos =====
-const CATEGORIAS = {
-  "Electrodomésticos":         { color: "#E1F5EE", emoji: "🧺" },
-  "Electrónica e informática": { color: "#EEEDFE", emoji: "📺" },
-  "Muebles y hogar":           { color: "#F1EFE8", emoji: "🛋️" },
-  "Ocio y deporte":            { color: "#FBEAF0", emoji: "🎿" },
-  "Vehículos":                 { color: "#E6F1FB", emoji: "🏍️" },
-  "Otros":                     { color: "#F1EFE8", emoji: "📦" }
-};
-const EMOJIS_TIPO = [
-  [/lavadora|secadora/, "🧺"], [/nevera|frigor|congelador/, "🧊"], [/horno|microondas|placa|campana|cocina/, "🍳"],
-  [/lavavajillas/, "🍽️"], [/tele|tv|televisor/, "📺"], [/m[oó]vil|tel[eé]fono|smartphone/, "📱"],
-  [/port[aá]til|ordenador|pc|tablet/, "💻"], [/impresora/, "🖨️"], [/moto/, "🏍️"], [/coche/, "🚗"],
-  [/bici/, "🚲"], [/silla|sof[aá]|mueble|mesa|cama/, "🛋️"], [/aspirador/, "🧹"], [/esqu[ií]/, "🎿"]
-];
-
-// ===== Almacenamiento en el propio móvil (IndexedDB) =====
-let db;
-function abrirBD() {
-  return new Promise((ok, mal) => {
-    const r = indexedDB.open("migarantia", 1);
-    r.onupgradeneeded = () => r.result.createObjectStore("productos", { keyPath: "id" });
-    r.onsuccess = () => { db = r.result; ok(); };
-    r.onerror = () => mal(r.error);
-  });
-}
-function tx(modo) { return db.transaction("productos", modo).objectStore("productos"); }
-function todos() { return new Promise((ok) => { const r = tx("readonly").getAll(); r.onsuccess = () => ok(r.result); }); }
-function guardar(p) { return new Promise((ok) => { const r = tx("readwrite").put(p); r.onsuccess = () => ok(); }); }
-function borrar(id) { return new Promise((ok) => { const r = tx("readwrite").delete(id); r.onsuccess = () => ok(); }); }
-
-// ===== Reglas de garantía (normativa española) =====
-// Garantía legal: 3 años desde la entrega para compras desde el 1/1/2022; 2 años antes.
-function finGarantiaLegal(p) {
-  const base = p.entrega || p.compra;
-  if (!base) return null;
-  const d = new Date(base + "T12:00:00");
-  d.setFullYear(d.getFullYear() + (d >= new Date("2022-01-01T00:00:00") ? 3 : 2));
-  return d;
-}
-function diasHasta(d) { return Math.round((d - new Date()) / 86400000); }
-function fecha(d) { return d ? d.toLocaleDateString("es-ES", { day: "2-digit", month: "2-digit", year: "numeric" }) : "–"; }
-function emojiDe(p) {
-  const t = (p.tipo || "").toLowerCase();
-  for (const [re, e] of EMOJIS_TIPO) if (re.test(t)) return e;
-  return (CATEGORIAS[p.categoria] || CATEGORIAS.Otros).emoji;
-}
-function nombre(p) { return [p.tipo, p.marca].filter(Boolean).join(" ") + (p.apodo ? " · " + p.apodo : ""); }
-function esc(s) { return String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
-
-// ===== Pantallas =====
-const app = document.getElementById("app");
-const fab = document.getElementById("fab");
-const volver = document.getElementById("volver");
-const tituloPantalla = document.getElementById("tituloPantalla");
-let filtro = "";
-
-function cabecera(titulo, conVolver) {
-  tituloPantalla.textContent = titulo;
-  volver.hidden = !conVolver;
-  fab.hidden = conVolver;
-  window.scrollTo(0, 0);
-}
-volver.onclick = () => pantallaInicio();
-fab.onclick = () => pantallaNueva();
-
-async function pantallaInicio() {
-  cabecera("Mi garantía", false);
-  const productos = (await todos()).filter((p) => !p.baja);
-  productos.forEach((p) => { p._fin = finGarantiaLegal(p); });
-  productos.sort((a, b) => (a._fin || Infinity) - (b._fin || Infinity));
-  const visibles = productos.filter((p) => (nombre(p) + " " + (p.modelo || "") + " " + (p.tienda || "")).toLowerCase().includes(filtro.toLowerCase()));
-
-  let html = `<input class="buscador" id="buscar" type="search" placeholder="Buscar producto…" value="${esc(filtro)}">`;
-  if (!productos.length) {
-    html += `<div class="vacio"><div class="grande">🧾</div><p><b>Registra tu primera compra</b></p><p>Pulsa “Nueva compra” y guarda sus datos. Sus garantías quedarán siempre a mano.</p></div>`;
-  } else if (!visibles.length) {
-    html += `<div class="vacio">No hay productos que coincidan con “${esc(filtro)}”.</div>`;
-  } else {
-    html += `<div class="lista">` + visibles.map((p) => {
-      const cat = CATEGORIAS[p.categoria] || CATEGORIAS.Otros;
-      const dias = p._fin ? diasHasta(p._fin) : null;
-      const vigente = dias !== null && dias >= 0;
-      let sub = "–", clase = "";
-      if (p._fin && vigente) { sub = "Fin garantía legal · " + fecha(p._fin); if (dias < 30) clase = "urgente"; }
-      else if (p._fin) { sub = "Garantía legal terminada · " + fecha(p._fin); }
-      return `<div class="item" data-id="${p.id}">
-        <div class="estado"><span class="punto ${vigente ? "completa" : "sin"}" title="Garantía"></span><span class="paraguas" title="Seguro">☂️</span></div>
-        <div class="avatar" style="background:${cat.color}">${emojiDe(p)}</div>
-        <div class="texto"><div class="titulo">${esc(nombre(p))}</div><div class="sub ${clase}">${sub}</div></div>
-      </div>`;
-    }).join("") + `</div>`;
-  }
-  html += `<div class="pie">Tus datos se guardan solo en este móvil.<br><button id="exportar">Descargar copia de seguridad</button> · v0.1</div>`;
-  app.innerHTML = html;
-
-  const buscar = document.getElementById("buscar");
-  buscar.oninput = () => { filtro = buscar.value; const pos = buscar.selectionStart; pantallaInicio().then(() => { const b = document.getElementById("buscar"); b.focus(); b.setSelectionRange(pos, pos); }); };
-  app.querySelectorAll(".item").forEach((el) => el.onclick = () => pantallaFicha(el.dataset.id));
-  document.getElementById("exportar").onclick = exportar;
-}
-
-function pantallaNueva() {
-  cabecera("Nueva compra", true);
-  const opciones = Object.keys(CATEGORIAS).map((c) => `<option>${c}</option>`).join("");
-  app.innerHTML = `
-    <div class="aviso">Próximamente: haz una foto del ticket y la ficha se rellenará sola. De momento, escríbela a mano.</div>
-    <form id="form">
-      <div class="dos">
-        <div><label>Tipo de producto *</label><input name="tipo" required placeholder="Lavadora"></div>
-        <div><label>Marca *</label><input name="marca" required placeholder="Miele"></div>
-      </div>
-      <label>Modelo</label><input name="modelo" placeholder="WCB380WCS">
-      <label>Apodo (si tienes dos iguales)</label><input name="apodo">
-      <div class="dos">
-        <div><label>Fecha de compra *</label><input name="compra" type="date" required></div>
-        <div><label>Fecha de entrega</label><input name="entrega" type="date"></div>
-      </div>
-      <div class="dos">
-        <div><label>Tienda</label><input name="tienda" placeholder="El Corte Inglés"></div>
-        <div><label>Nº de pedido</label><input name="pedido"></div>
-      </div>
-      <div class="dos">
-        <div><label>Precio (€)</label><input name="precio" inputmode="decimal"></div>
-        <div><label>Nº de serie</label><input name="serie"></div>
-      </div>
-      <div class="dos">
-        <div><label>Categoría</label><select name="categoria">${opciones}</select></div>
-        <div><label>Espacio</label><select name="espacio"><option>Hogar</option><option>Personal</option></select></div>
-      </div>
-      <button class="fab" style="position:static;width:100%;margin-top:20px" type="submit">Guardar</button>
-    </form>`;
-  document.getElementById("form").onsubmit = async (e) => {
-    e.preventDefault();
-    const p = Object.fromEntries(new FormData(e.target).entries());
-    for (const k in p) p[k] = p[k].trim();
-    p.id = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
-    p.creado = new Date().toISOString();
-    await guardar(p);
-    pantallaFicha(p.id);
-  };
-}
-
-async function pantallaFicha(id) {
-  const p = (await todos()).find((x) => x.id === id);
-  if (!p) return pantallaInicio();
-  cabecera(nombre(p), true);
-  const fin = finGarantiaLegal(p);
-  const dias = fin ? diasHasta(fin) : null;
-  const filas = [["Modelo", p.modelo], ["Nº de serie", p.serie], ["Tienda", p.tienda], ["Nº de pedido", p.pedido],
-    ["Compra", p.compra && fecha(new Date(p.compra + "T12:00:00"))], ["Entrega", p.entrega && fecha(new Date(p.entrega + "T12:00:00"))],
-    ["Precio", p.precio && p.precio + " €"], ["Categoría", p.categoria], ["Espacio", p.espacio]]
-    .filter(([, v]) => v).map(([k, v]) => `<div class="fila"><span>${k}</span><span>${esc(v)}</span></div>`).join("");
-  app.innerHTML = `
-    <div class="tarjeta"><h2>COBERTURAS</h2>
-      <div class="fila"><span>Garantía legal</span><span>${fin ? (dias >= 0 ? "hasta " + fecha(fin) : "terminó el " + fecha(fin)) : "falta la fecha"}</span></div>
-      <div class="fila"><span>Reclamar a</span><span>${esc(p.tienda || "la tienda")}</span></div>
-    </div>
-    <div class="tarjeta"><h2>DATOS DE COMPRA</h2>${filas}</div>
-    <button class="boton peligro" id="eliminar">Eliminar (registrado por error)</button>`;
-  document.getElementById("eliminar").onclick = async () => {
-    if (confirm(`¿Eliminar ${nombre(p)}? Se borrará la ficha y no se puede deshacer.`)) { await borrar(p.id); pantallaInicio(); }
-  };
-}
-
-async function exportar() {
-  const datos = { app: "migarantia", version: 1, exportado: new Date().toISOString(), productos: await todos() };
-  const blob = new Blob([JSON.stringify(datos, null, 2)], { type: "application/json" });
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = "migarantia-copia-" + new Date().toISOString().slice(0, 10) + ".json";
-  a.click();
-}
-
-// ===== Arranque =====
-abrirBD().then(pantallaInicio);
-if (navigator.storage && navigator.storage.persist) navigator.storage.persist();
-if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js");
-</script>
+<button class="fab" id="fab" hidden>＋ Nueva compra</button>
+<nav id="nav">
+  <a href="#/" data-ruta="inicio"><span>🏠</span>Inicio</a>
+  <a href="#/agenda" data-ruta="agenda"><span>📅</span>Agenda</a>
+  <a href="#/inactivos" data-ruta="inactivos"><span>🗄️</span>Inactivos</a>
+</nav>
+<script src="app.js"></script>
 </body>
 </html>
